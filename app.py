@@ -65,7 +65,7 @@ now = datetime.now()
 date_str = now.strftime("%Y%m%d")
 
 def gpt3(history):
-    openai.api_key='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'
+    openai.api_key=APIKEY2
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=history
