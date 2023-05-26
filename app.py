@@ -9,8 +9,8 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-APIKEY = 'AIzaSyAgtjLOH0KEN41ypARlmnlP4XvTM6rfP9Q' #os.environ['APIKEY']
-APIKEY2 = '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' #os.environ['APIKEY2']
+APIKEY = os.environ['APIKEY']
+APIKEY2 = os.environ['APIKEY2']
 
 config = {
   'apiKey': APIKEY,
