@@ -9,8 +9,8 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-APIKEY = os.environ['APIKEY']
-APIKEY2 = os.environ['APIKEY2']
+APIKEY = 'AIzaSyAgtjLOH0KEN41ypARlmnlP4XvTM6rfP9Q'#os.environ['APIKEY']
+APIKEY2 = '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' #os.environ['APIKEY2']
 
 config = {
   'apiKey': APIKEY,
@@ -57,6 +57,10 @@ with open('speech1.txt', 'r') as file:
 with open('speech2.txt', 'r') as file:
     # Read the contents of the file into a string
     speech_basis2 = file.read()
+
+with open('intro.txt', 'r') as file:
+    # Read the contents of the file into a string
+    introductie = file.read()
 
 # Get the current date
 now = datetime.now()
@@ -134,6 +138,13 @@ def index():
                 role=list_roles[name_index]
                 #muiters = [list_names[key] for key in list_roles if list_roles[key] == "Muiter"]
                 muiters = [list_names[i] for i in range(len(list_roles)) if list_roles[i] == "Muiter"]
+                matrozen = [list_names[i] for i in range(len(list_roles)) if list_roles[i] == "Matroos"]
+                assignment1=list_assignment[0]
+                assignment2=list_assignment[1]
+                assignment3=list_assignment[2]
+                session["matroos1"]=matrozen[0]
+                session["matroos2"]=matrozen[1]
+                session["matroos3"]=matrozen[2]
                 session["muiter1"]=muiters[0]
                 session["muiter2"]=muiters[1]
                 session["muiter3"]=muiters[2]
@@ -147,10 +158,10 @@ def index():
                         session["history"]= [{"content": matroos_basis+"This is the task of the person you are helping: "+session["task"]+". This is the person you are helping: "+session["name"] ,"role": "system"}]
                         db.child(date_str).child(session["name"]).child("History").set(session["history"])  
                     elif session["role"]== 'Muiter':
-                        session["history"]= [{"content": muiter_basis ,"role": "system"}]
+                        session["history"]= [{"content": f'{muiter_basis} {session["matroos1"]} : {assignment1}. {session["matroos2"]} : {assignment1}. {session["matroos3"]} : {assignment1}. ' ,"role": "system"}]
                         db.child(date_str).child(session["name"]).child("History").set(session["history"])
                     elif session["role"]== 'Kapitein':
-                        session["history"]= [{"content": kapitein_basis ,"role": "system"}]
+                        session["history"]= [{"content": f'{kapitein_basis} {session["matroos1"]} : {assignment1}. {session["matroos2"]} : {assignment1}. {session["matroos3"]} : {assignment1}. ',"role": "system"}]
                         db.child(date_str).child(session["name"]).child("History").set(session["history"])
                     else:
                         pass
@@ -188,7 +199,7 @@ def home():
     if (request.method == 'POST'):
         return redirect(url_for("chat"))
     else:
-        return render_template('home.html')
+        return render_template('home.html', name=session["name"],intro=introductie)
 
 @app.route('/speech', methods=['GET', 'POST'])
 def speech():
@@ -322,9 +333,9 @@ def chat():
             session["chat"]=session["history"][1:]
             session["chat"]=HistToString(session["chat"][-5:])
             db.child(date_str).child(session["name"]).child("History").set(session["history"])
-            return render_template('conversation_kapitein.html', answer=session["test"], chat=session["chat"], role=session["role"], task=session["task"],group=html)
+            return render_template('conversation.html', answer=session["test"], chat=session["chat"], role=session["role"], task=session["task"])
         else:    
-            return render_template('conversation_kapitein.html', chat="", role=session["role"], task=session["task"],group=html)
+            return render_template('conversation.html', chat="", role=session["role"], task=session["task"])
     
     else:
         return render_template('conversation.html', chat="", role=session["role"], task=session["task"])
